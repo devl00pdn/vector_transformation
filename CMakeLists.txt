@@ -3,4 +3,7 @@ project(quaternion)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(quaternion main.cpp quaternion/quaternion.h)
+
+add_executable(quaternion main.cpp include/quaternion.h
+        include/rotor.h)
+target_include_directories(quaternion PUBLIC include)
