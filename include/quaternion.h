@@ -2,12 +2,11 @@
 
 #include <cmath>
 #include <cstdint>
-
-
+#include <type_traits>
 namespace quaternion {
 
-
-template <class T = float>
+template <class T                                                  = float,
+          std::enable_if_t<std::is_floating_point<T>::value, bool> = true>
 class Quaternion {
 public:
     using Type = T;
@@ -20,9 +19,11 @@ public:
 
     Quaternion() = default;
     Quaternion(Type w, Type x, Type y, Type z) : w_(w), x_(x), y_(y), z_(z) {}
+
+
     Quaternion(const Quaternion<Type>& q_rhv)
             : w_(q_rhv.w_), x_(q_rhv.x_), y_(q_rhv.y_), z_(q_rhv.z_) {}
-    Quaternion<Type>& operator=(const Quaternion<Type>& q_rhv) {
+    Quaternion<Type>& operator=(Quaternion<Type>& q_rhv) {
         w_ = q_rhv.w_;
         x_ = q_rhv.x_;
         y_ = q_rhv.y_;
@@ -56,7 +57,7 @@ public:
         return Quaternion<Type>(w, x, y, z);
     }
 
-    Quaternion<Type>& multiply(Type gain) {
+    Quaternion<Type>& Multiply(Type gain) {
         w_ *= gain;
         x_ *= gain;
         y_ *= gain;
@@ -64,21 +65,21 @@ public:
         return *this;
     }
 
-    Quaternion<Type> get_inverse() const {
+    Quaternion<Type> GetInverse() const {
         Quaternion<Type> q_conj{w_, -x_, -y_, -z_};
         Type             q_pow = w_ * w_ + x_ * x_ + y_ * y_ + z_ * z_;
         if (q_pow > 0.0) {
-            return q_conj.multiply(1. / q_pow);
+            return q_conj.Multiply(1. / q_pow);
         }
         return {1, 0, 0, 0};
     }
 
-    Quaternion<Type>& get_normalize() const {
-        auto q = clone();
-        return q.normalize();
+    Quaternion<Type>& GetNormalize() const {
+        auto q = Clone();
+        return q.Normalize();
     }
 
-    void normalize() {
+    void Normalize() {
         Type magnitude = sqrt(w_ * w_ + x_ * x_ + y_ * y_ + z_ * z_);
         if (magnitude > 0.) {
             w_ /= magnitude;
@@ -88,12 +89,16 @@ public:
         }
     }
 
-    Quaternion<Type> clone() const {
+    Quaternion<Type> Clone() const {
         return {w_, x_, y_, z_};
     }
 
-    v3_t get_vector() const {
+    v3_t GetImaginary() const {
         return {x_, y_, z_};
+    }
+
+    Type GetReal() {
+        return w_;
     }
 
 private:
@@ -102,6 +107,5 @@ private:
     Type y_{0};
     Type z_{0};
 };
-
 
 }  // namespace quaternion
