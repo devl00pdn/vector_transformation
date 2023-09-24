@@ -10,6 +10,8 @@ public:
     using q_t = quaternion::Quaternion<Type>;
     using v_t = typename q_t::v3_t;
 
+    Rotate_global() = delete;
+    
     Rotate_global(Type roll_rad, Type pitch_rad, Type yaw_rad)
             : roll_rad_{roll_rad}, pitch_rad_{pitch_rad}, yaw_rad_{yaw_rad} {
         q_roll_ = q_t{roll_rad, 0, 0};
@@ -43,4 +45,8 @@ private:
     Type pitch_rad_{0};
     Type yaw_rad_{0};
 };
+
+template <class Type>
+Rotate_global(Type, Type, Type) -> Rotate_global<float>;
+
 }  // namespace vector_transformation

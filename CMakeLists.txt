@@ -8,7 +8,6 @@ add_executable(quaternion_tests include/quaternion.h
         tests/main.cpp
         tests/TEST_quternion.cpp
         tests/TEST_rotate_global.cpp
-        include/quaternion.cpp
 )
 
 find_package(GTest REQUIRED)

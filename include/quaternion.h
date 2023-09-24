@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdint>
 #include <type_traits>
+
 namespace quaternion {
 
 template <class T                                                  = float,
@@ -19,8 +20,6 @@ public:
 
     Quaternion() = default;
     Quaternion(Type w, Type x, Type y, Type z) : w_(w), x_(x), y_(y), z_(z) {}
-
-
     Quaternion(const Quaternion<Type>& q_rhv)
             : w_(q_rhv.w_), x_(q_rhv.x_), y_(q_rhv.y_), z_(q_rhv.z_) {}
     Quaternion<Type>& operator=(Quaternion<Type>& q_rhv) {
@@ -32,12 +31,23 @@ public:
     }
 
     Quaternion(Type x_ang_rad, Type y_ang_rad, Type z_ang_rad) {
-        Type cr = cos(x_ang_rad * 0.5);
-        Type sr = sin(x_ang_rad * 0.5);
-        Type cp = cos(y_ang_rad * 0.5);
-        Type sp = sin(y_ang_rad * 0.5);
-        Type cy = cos(z_ang_rad * 0.5);
-        Type sy = sin(z_ang_rad * 0.5);
+        Type cr, sr, cp, sp, cy, sy;
+
+        if constexpr (std::is_same_v<Type, double>) {
+            cr = cos(x_ang_rad * 0.5);
+            sr = sin(x_ang_rad * 0.5);
+            cp = cos(y_ang_rad * 0.5);
+            sp = sin(y_ang_rad * 0.5);
+            cy = cos(z_ang_rad * 0.5);
+            sy = sin(z_ang_rad * 0.5);
+        } else {
+            cr = cosf(x_ang_rad * 0.5f);
+            sr = sinf(x_ang_rad * 0.5f);
+            cp = cosf(y_ang_rad * 0.5f);
+            sp = sinf(y_ang_rad * 0.5f);
+            cy = cosf(z_ang_rad * 0.5f);
+            sy = sinf(z_ang_rad * 0.5f);
+        }
 
         w_ = cr * cp * cy + sr * sp * sy;
         x_ = sr * cp * cy - cr * sp * sy;
@@ -69,14 +79,15 @@ public:
         Quaternion<Type> q_conj{w_, -x_, -y_, -z_};
         Type             q_pow = w_ * w_ + x_ * x_ + y_ * y_ + z_ * z_;
         if (q_pow > 0.0) {
-            return q_conj.Multiply(1. / q_pow);
+            return q_conj.Multiply(1.f / q_pow);
         }
         return {1, 0, 0, 0};
     }
 
-    Quaternion<Type>& GetNormalize() const {
+    Quaternion<Type> GetNormalize() const {
         auto q = Clone();
-        return q.Normalize();
+        q.Normalize();
+        return q;
     }
 
     void Normalize() {
@@ -107,5 +118,11 @@ private:
     Type y_{0};
     Type z_{0};
 };
+
+template <class Type>
+Quaternion(Type, Type, Type, Type) -> Quaternion<float>;
+
+template <class Type>
+Quaternion(Type, Type, Type) -> Quaternion<float>;
 
 }  // namespace quaternion
