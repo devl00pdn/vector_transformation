@@ -39,7 +39,6 @@ TEST(quternion, operator_assignment_copy) {
 }
 
 TEST(quternion, constructor_rpy) {
-    ///  0.7071068, 0, 0.7071068, 0
     float                  rad_90deg = static_cast<float>(M_PI_2);
     quaternion::Quaternion quat_from_rpy(rad_90deg, rad_90deg, rad_90deg);
     EXPECT_NEAR(quat_from_rpy.GetReal(), 0.7071068, 0.001);

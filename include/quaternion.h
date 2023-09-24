@@ -13,15 +13,16 @@ public:
     using Type = T;
 
     struct v3_t {
-        Type x{0};
-        Type y{0};
-        Type z{0};
+        Type x{0};  ///> forward
+        Type y{0};  ///> left
+        Type z{0};  ///> up
     };
 
     Quaternion() = default;
     Quaternion(Type w, Type x, Type y, Type z) : w_(w), x_(x), y_(y), z_(z) {}
     Quaternion(const Quaternion<Type>& q_rhv)
             : w_(q_rhv.w_), x_(q_rhv.x_), y_(q_rhv.y_), z_(q_rhv.z_) {}
+
     Quaternion<Type>& operator=(Quaternion<Type>& q_rhv) {
         w_ = q_rhv.w_;
         x_ = q_rhv.x_;
@@ -29,7 +30,26 @@ public:
         z_ = q_rhv.z_;
         return *this;
     }
+    Quaternion<Type>& operator=(Quaternion<Type>&& q_rhv) {
+        w_ = q_rhv.w_;
+        x_ = q_rhv.x_;
+        y_ = q_rhv.y_;
+        z_ = q_rhv.z_;
+        return *this;
+    }
 
+    /**
+     * Quaternion from euler angles.
+     * Describe rotate motion as a sequence of three  continues turn: x,y,z
+     * axis. Each turn around axis changes local coordinate system.
+     * Base coordinate system is:
+     * x - forward
+     * y - left
+     * z - up
+     * @param x_ang_rad - rotation angle around x axis
+     * @param y_ang_rad - rotation angle around y axis
+     * @param z_ang_rad - rotation angle around z axis
+     */
     Quaternion(Type x_ang_rad, Type y_ang_rad, Type z_ang_rad) {
         Type cr, sr, cp, sp, cy, sy;
 
@@ -124,5 +144,8 @@ Quaternion(Type, Type, Type, Type) -> Quaternion<float>;
 
 template <class Type>
 Quaternion(Type, Type, Type) -> Quaternion<float>;
+
+template <class Type, Type...>
+Quaternion(Type...) -> Quaternion<float>;
 
 }  // namespace quaternion
