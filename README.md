@@ -12,7 +12,7 @@ Quaternions under the hood.
 - Header only
 - Depend on only c++17 (type_traits)
 - Embedded friendly. No allocations / exceptions
-- optimized calculations. Only multiplication, addition when rotation angles is static
+- Optimized calculations. Only multiplication, addition when rotation angles are static
 
 #### Example
 
